@@ -1,27 +1,56 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import AppLayout from "./components/AppLayout";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import LibrariesPage from "./pages/LibrariesPage";
+import FloorsPage from "./pages/FloorsPage";
+import SeatLayoutPage from "./pages/SeatLayoutPage";
+import BookingConfirmationPage from "./pages/BookingConfirmationPage";
+import PaymentPage from "./pages/PaymentPage";
+import QRCodePage from "./pages/QRCodePage";
+import MyBookingsPage from "./pages/MyBookingsPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  return <AppLayout>{children}</AppLayout>;
+};
+
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) return <Navigate to="/libraries" replace />;
+  return <>{children}</>;
+};
+
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+    <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+    <Route path="/libraries" element={<ProtectedRoute><LibrariesPage /></ProtectedRoute>} />
+    <Route path="/library/:libraryId/floors" element={<ProtectedRoute><FloorsPage /></ProtectedRoute>} />
+    <Route path="/seats/:floorId" element={<ProtectedRoute><SeatLayoutPage /></ProtectedRoute>} />
+    <Route path="/booking-confirmation" element={<ProtectedRoute><BookingConfirmationPage /></ProtectedRoute>} />
+    <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
+    <Route path="/qr/:bookingId" element={<ProtectedRoute><QRCodePage /></ProtectedRoute>} />
+    <Route path="/my-bookings" element={<ProtectedRoute><MyBookingsPage /></ProtectedRoute>} />
+    <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+    <Route path="/" element={<Navigate to="/libraries" replace />} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
+  <ThemeProvider>
+    <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AppRoutes />
       </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+    </AuthProvider>
+  </ThemeProvider>
 );
 
 export default App;
