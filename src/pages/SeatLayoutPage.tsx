@@ -50,8 +50,8 @@ const SeatLayoutPage = () => {
             id: `s-${r}-${c}`,
             label: `${String.fromCharCode(65 + r)}${c + 1}`,
             status,
-            row: r,
-            col: c,
+            x: c,
+            y: r,
           });
         }
       }
