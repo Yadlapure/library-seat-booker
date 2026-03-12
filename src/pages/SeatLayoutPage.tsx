@@ -173,10 +173,9 @@ const SeatLayoutPage = () => {
                     </span>
                     <div className="flex gap-2">
                       {rowSeats
-                        .sort((a, b) => a.col - b.col)
+                        .sort((a, b) => a.x - b.x)
                         .map((seat) => {
-                          // Add aisle gap
-                          const hasGap = seat.col === 4;
+                          const hasGap = seat.x === 4;
                           return (
                             <React.Fragment key={seat.id}>
                               {hasGap && <div className="w-4" />}
