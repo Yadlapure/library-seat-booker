@@ -10,8 +10,8 @@ interface Seat {
   id: string;
   label: string;
   status: 'available' | 'held' | 'booked';
-  row: number;
-  col: number;
+  x: number;
+  y: number;
 }
 
 const SeatLayoutPage = () => {
