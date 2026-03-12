@@ -26,8 +26,13 @@ const FloorsPage = () => {
   const loadFloors = async () => {
     try {
       const res = await getFloors(libraryId!);
-      setFloors(res.data);
-    } catch {
+      if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+        setFloors(res.data);
+      } else {
+        throw new Error('No data');
+      }
+    } catch (err) {
+      console.log('Using demo floor data', err);
       setFloors([
         { id: 'f1', name: 'Ground Floor', floor_number: 0, total_seats: 40, available_seats: 15, description: 'General reading area with natural lighting' },
         { id: 'f2', name: 'First Floor', floor_number: 1, total_seats: 50, available_seats: 22, description: 'Silent study zone with individual desks' },
