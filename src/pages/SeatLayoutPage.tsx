@@ -112,8 +112,8 @@ const SeatLayoutPage = () => {
   };
 
   const seatsByRow = seats.reduce<Record<number, Seat[]>>((acc, seat) => {
-    if (!acc[seat.row]) acc[seat.row] = [];
-    acc[seat.row].push(seat);
+    if (!acc[seat.y]) acc[seat.y] = [];
+    acc[seat.y].push(seat);
     return acc;
   }, {});
 
