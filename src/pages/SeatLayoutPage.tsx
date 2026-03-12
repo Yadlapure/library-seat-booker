@@ -10,8 +10,8 @@ interface Seat {
   id: string;
   label: string;
   status: 'available' | 'held' | 'booked';
-  row: number;
-  col: number;
+  x: number;
+  y: number;
 }
 
 const SeatLayoutPage = () => {
@@ -50,8 +50,8 @@ const SeatLayoutPage = () => {
             id: `s-${r}-${c}`,
             label: `${String.fromCharCode(65 + r)}${c + 1}`,
             status,
-            row: r,
-            col: c,
+            x: c,
+            y: r,
           });
         }
       }
@@ -112,8 +112,8 @@ const SeatLayoutPage = () => {
   };
 
   const seatsByRow = seats.reduce<Record<number, Seat[]>>((acc, seat) => {
-    if (!acc[seat.row]) acc[seat.row] = [];
-    acc[seat.row].push(seat);
+    if (!acc[seat.y]) acc[seat.y] = [];
+    acc[seat.y].push(seat);
     return acc;
   }, {});
 
@@ -173,10 +173,9 @@ const SeatLayoutPage = () => {
                     </span>
                     <div className="flex gap-2">
                       {rowSeats
-                        .sort((a, b) => a.col - b.col)
+                        .sort((a, b) => a.x - b.x)
                         .map((seat) => {
-                          // Add aisle gap
-                          const hasGap = seat.col === 4;
+                          const hasGap = seat.x === 4;
                           return (
                             <React.Fragment key={seat.id}>
                               {hasGap && <div className="w-4" />}
